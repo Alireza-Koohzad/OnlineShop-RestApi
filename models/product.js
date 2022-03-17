@@ -1,8 +1,9 @@
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize();
+const {DataTypes} = require('sequelize');
+const sequelize = require('../utils/database');
 
-const STRING = Sequelize.STRING;
-const INTEGER = Sequelize.INTEGER;
+
+const STRING = DataTypes.STRING;
+const INTEGER = DataTypes.INTEGER;
 
 const Product = sequelize.define('Product', {
     id: {

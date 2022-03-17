@@ -1,8 +1,7 @@
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize();
+const {DataTypes} = require('sequelize');
+const sequelize = require('../utils/database');
 
-const STRING = Sequelize.STRING;
-const INTEGER = Sequelize.INTEGER;
+const INTEGER = DataTypes.INTEGER;
 
 const Cart = sequelize.define('Cart', {
     id: {

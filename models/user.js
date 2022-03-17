@@ -1,14 +1,20 @@
-const Sequelize = require('sequelize');
-const sequelize = new Sequelize();
-const String = Sequelize.STRING;
+const {DataTypes} = require('sequelize');
+const sequelize = require('../utils/database');
+const String = DataTypes.STRING;
+const Integer = DataTypes.INTEGER;
 
 const User = sequelize.define('users', {
+    id : {
+        type : Integer,
+        primaryKey : true ,
+        allowNull : false,
+        autoIncrement : true
+    },
     username: {
         type: String,
         allowNull: false
     },
     email: {
-        primaryKey: true,
         type: String,
         allowNull: false
     },
@@ -23,10 +29,7 @@ const User = sequelize.define('users', {
     }
 })
 
-User.associate = function (models){
-    User.hasOne(models.Cart);
 
-}
 
 module.exports = User;
 

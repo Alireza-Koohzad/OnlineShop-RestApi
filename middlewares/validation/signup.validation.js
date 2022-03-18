@@ -15,13 +15,12 @@ module.exports = [
         .trim()
         .withMessage("please enter valid email. ")
         .custom((value, {req}) => {
-            return authService.findEmail(value);
+            return authService.findEmail(value,true);
         }),
-    body('password')
+    body('password' , "please enter password contains only number and text at least 6 character")
         .isString()
         .isLength({min: 6})
         .isAlphanumeric()
-        .withMessage("please enter password contains only number and text at least 6 character")
         .trim(),
 
     body('confirmPassword')

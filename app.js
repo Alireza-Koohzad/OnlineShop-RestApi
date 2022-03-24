@@ -1,7 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const sequelize = require('./utils/database');
-const authRouter = require('./routes/auth');
+const routes = require('./routes/rotues');
 const passport = require('passport');
 
 //define models
@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 })
 
 //routers
-app.use('/auth' , authRouter);
+app.use('/' ,  routes);
 
 //config middleware
 app.use(require('./middlewares/error.middleware'));
@@ -51,7 +51,15 @@ Product.belongsToMany(Cart, {through: CartItem});
 //connect to server
 sequelize
     .sync()
-    .then(() => {
+    .then( () => {
+        // const  product = new Product({
+        //     name : "shoes",
+        //     price : 45,
+        //     description : "this is excellent",
+        //     imageUrl : "null"
+        // })
+        // await product.save();
+
         app.listen(3000)
     })
     .catch(err => console.log(err))

@@ -1,11 +1,11 @@
 const {body} = require('express-validator/check');
-const authService = require('../../services/auth');
+const authService = require('../../services/auth.service');
 
 module.exports = [
     body('username')
         .isString()
         .not().isEmpty()
-        .isLength({min: 6})
+        // .isLength({min: 6})
         .trim(),
 
     body('email')

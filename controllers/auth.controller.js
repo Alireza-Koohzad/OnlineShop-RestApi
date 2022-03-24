@@ -1,5 +1,5 @@
-const User = require('../models/user');
-const authService = require('../services/auth');
+const authService = require('../services/auth.service');
+const cartService = require("../services/cart.service");
 const {validationResult} = require('express-validator/check')
 const registerFlag = false;
 
@@ -15,19 +15,19 @@ exports.signup = async (req, res, next) => {
         }
         const {email, password, username} = req.body;
         const user = await authService.signup(email, password, username);
+        //create Cart for User
+        await cartService.createCart(user);
         res.status(201).json({
             message: "create user successfully",
             user: user.id
-        })
+        });
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
         next(err);
     }
-
 }
-
 
 exports.login = async (req, res, next) => {
     try {
@@ -54,7 +54,6 @@ exports.login = async (req, res, next) => {
                 userId: user.dataValues.id
             })
         }
-
     } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
@@ -63,9 +62,9 @@ exports.login = async (req, res, next) => {
     }
 }
 
-exports.getTest = (req, res , next) =>{
+exports.getTest =  (req, res, next) => {
     res.json({
-        message : "you are test page  now !"
+        message: "you are test page  now !"
     })
 }
 

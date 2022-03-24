@@ -38,9 +38,7 @@ exports.postCard = async (cart, prodId) => {
 }
 
 exports.deleteCart = async (req,cart, prodId) => {
-    console.log("test3")
     const products = await cart.getProducts({where: {id: prodId}});
-    console.log("test4")
     let product;
     if (products.length > 0){
         product = products[0];
@@ -49,5 +47,4 @@ exports.deleteCart = async (req,cart, prodId) => {
     const error = new Error("not found")
     error.statusCode = 404;
     throw error
-
 }

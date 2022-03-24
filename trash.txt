@@ -1,0 +1,15 @@
+//get order
+
+let order_Array = [];
+        const orders = await orderService.getOrders(req);
+        for (const order of orders) {
+            let orderObj = {};
+            orderObj.id = order.id;
+            orderObj.products =  await orderService.findOrderItems(order);
+            order_Array.push(orderObj);
+            console.log(order_Array)
+        }
+        res.status(201).json({
+            message: "getOrders successfully",
+            orders: order_Array
+        })

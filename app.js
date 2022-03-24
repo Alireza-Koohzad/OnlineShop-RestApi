@@ -53,12 +53,13 @@ Product.belongsToMany(Order, { through: OrderItem });
 
 //connect to server
 sequelize
-    .sync({force : true})
-    .then( () => {
+    .sync()
+    .then(  () => {
+
         // const  product = new Product({
-        //     name : "shoes",
+        //     name : "laptop",
         //     price : 45,
-        //     description : "this is excellent",
+        //     description : "this is good",
         //     imageUrl : "null"
         // })
         // await product.save();

@@ -11,7 +11,7 @@ const CartItem = require('./models/cart-item')
 const Product = require('./models/product');
 const Order = require('./models/order');
 const OrderItem = require('./models/order-item');
-
+const Payment = require('./models/payment');
 //create app server
 const app = express();
 //config body parser
@@ -48,14 +48,15 @@ Order.belongsTo(User);
 User.hasMany(Order);
 Order.belongsToMany(Product, { through: OrderItem });
 Product.belongsToMany(Order, { through: OrderItem });
-
+User.hasMany(Payment);
+Order.hasOne(Payment);
+Payment.belongsTo(Order);
 
 
 //connect to server
 sequelize
     .sync()
     .then(  () => {
-
         // const  product = new Product({
         //     name : "laptop",
         //     price : 45,

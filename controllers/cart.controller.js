@@ -17,15 +17,16 @@ exports.getCart = async (req, res, next) => {
 }
 
 exports.postCart = async (req, res, next) => {
-    const prodId = req.body.prodId;
     try {
+        const prodId = req.body.prodId;
+
         const cart = await cartService.getCart(req);
         const newCart = await cartService.postCard(cart, prodId);
         if (newCart) {
             res.status(201).json({
                 message: "add product to cart successfully!",
-                cart: cart,
-                products: cart.getProducts()
+                cart: newCart,
+                products : await newCart.getProducts()
             })
         }
     } catch (err) {

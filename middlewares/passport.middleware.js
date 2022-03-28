@@ -16,7 +16,6 @@ module.exports = (passport) => {
             const user = await User.findOne({where: {id: jwt_payload.id}});
 
             if (!user) {
-                console.log("lleeee")
                 done(null, false, {message: "not authentication"});
             } else {
                 //add user to request

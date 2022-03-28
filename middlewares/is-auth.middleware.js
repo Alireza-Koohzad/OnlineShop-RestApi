@@ -10,8 +10,6 @@ exports.checkUserAuth = (req , res , next) => {
                 message: 'No jwt token'
             })
         }
-        console.log("start : ")
-        console.log(user )
         req.user = user
         return next()
     })(req, res, next)

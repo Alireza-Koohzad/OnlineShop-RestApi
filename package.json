@@ -22,6 +22,8 @@
     "passport-local": "^1.0.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.17.0"
+    "request-promise": "^4.2.6",
+    "sequelize": "^6.17.0",
+    "zarinpal-checkout": "^0.2.7"
   }
 }

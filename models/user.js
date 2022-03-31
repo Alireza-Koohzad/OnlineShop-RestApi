@@ -4,11 +4,11 @@ const String = DataTypes.STRING;
 const Integer = DataTypes.INTEGER;
 
 const User = sequelize.define('users', {
-    id : {
-        type : Integer,
-        primaryKey : true ,
-        allowNull : false,
-        autoIncrement : true
+    id: {
+        type: Integer,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
     },
     username: {
         type: String,
@@ -25,10 +25,18 @@ const User = sequelize.define('users', {
     role: {
         type: String,
         allowNull: false,
-        defaultValue : 'user'
+        defaultValue: 'user'
+    },
+    resetToken: {
+        type: String,
+        allowNull : false
+    },
+    resetTokenExpiration : {
+        type : DataTypes.DATE,
+        allowNull : true
     }
-})
 
+})
 
 
 module.exports = User;

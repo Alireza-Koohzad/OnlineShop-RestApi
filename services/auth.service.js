@@ -12,6 +12,11 @@ exports.signup = async (email, password, username) => {
     return user.save();
 }
 
+exports.hashPassword = async (password )=>{
+    return  await bcrypt.hash(password, 12);
+
+}
+
 
 exports.findEmail = async (email, registerFlag) => {
     const user = await User.findOne({where: {email: email}});

@@ -6,7 +6,6 @@ const authController = require('../controllers/auth.controller');
 const cartController = require('../controllers/cart.controller');
 const orderController = require('../controllers/order.controller');
 const paymentController = require('../controllers/payment.controller');
-
 const signupMiddleware = require('../middlewares/validation/signup.validation');
 const loginMiddleware = require('../middlewares/validation/login.validation');
 const {checkUserAuth} = require("../middlewares/is-auth.middleware");
@@ -21,6 +20,9 @@ router.post('/login' , loginMiddleware , authController.login)
 
 router.get('/test' , checkUserAuth , authController.getTest);
 
+router.post('/resetPassword' , authController.postResetPassword);
+router.get('/resetPassword/:token' , authController.getNewPassword)
+router.post('/newPassword' , authController.getNewPassword)
 
 //cart
 
@@ -37,5 +39,6 @@ router.post('/createOrder', checkUserAuth , orderController.postOrder);
 //payment
 router.post('/payment' , checkUserAuth , paymentController.postPayment);
 router.get('/payment/returnPage' , checkUserAuth , paymentController.paymentReturnPage);
+
 
 module.exports = router;

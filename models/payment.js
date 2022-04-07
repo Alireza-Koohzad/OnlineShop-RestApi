@@ -2,8 +2,7 @@ const {DataTypes} = require('sequelize');
 const sequelize = require('../utils/database');
 
 //const variable
-const INTEGER = DataTypes.INTEGER;
-const STRING = DataTypes.STRING;
+const NUMBER = DataTypes.INTEGER;
 const BOOLEAN = DataTypes.BOOLEAN;
 
 //schema
@@ -11,14 +10,14 @@ const Payment = sequelize.define('Payment', {
     id: {
         autoIncrement : true,
         primaryKey: true,
-        type: INTEGER,
+        type: NUMBER,
         allowNull: false
     },
     pay_code : {
-        type : INTEGER,
+        type : NUMBER,
     },
     price : {
-        type : INTEGER,
+        type : NUMBER,
         allowNull: false
     },
     status : {

@@ -3,13 +3,13 @@ const sequelize = require('../utils/database');
 
 
 const STRING = DataTypes.STRING;
-const INTEGER = DataTypes.INTEGER;
+const NUMBER = DataTypes.INTEGER
 
 const Product = sequelize.define('Product', {
     id: {
         autoIncrement : true,
         primaryKey: true,
-        type: INTEGER,
+        type: NUMBER,
         allowNull: false
     },
     name: {
@@ -17,7 +17,7 @@ const Product = sequelize.define('Product', {
         allowNull: false
     },
     price: {
-        type: INTEGER,
+        type: NUMBER,
         allowNull: false
     },
     description: {

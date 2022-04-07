@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const sequelize = require('./utils/database');
 const routes = require('./routes/rotues');
 const passport = require('passport');
+const multer = require("multer");
+const uploadFile = require('./middlewares/upload.middleware');
 
 //define models
 const User = require('./models/user')
@@ -14,8 +16,38 @@ const OrderItem = require('./models/order-item');
 const Payment = require('./models/payment');
 //create app server
 const app = express();
+
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null,"public/assets/uploads/");
+    },
+    filename: (req, file, cb) => {
+        console.log(file.originalname);
+        cb(null, new Date().toISOString() + "-" +  file.originalname);
+    },
+});
+const fileFilter = (req, file, cb) => {
+    if (
+        file.mimetype === 'image/png' ||
+        file.mimetype === 'image/jpg' ||
+        file.mimetype === 'image/jpeg'
+    ) {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+}
+
+app.use(multer({
+    storage: storage,
+    fileFilter : fileFilter
+}).single("image"));
+
+
+
 //config body parser
 app.use(bodyParser.json());
+//config multer
 
 //config passport
 app.use(passport.initialize());
@@ -51,7 +83,6 @@ Product.belongsToMany(Order, { through: OrderItem });
 User.hasMany(Payment);
 Order.hasOne(Payment);
 Payment.belongsTo(Order);
-
 
 //connect to server
 sequelize

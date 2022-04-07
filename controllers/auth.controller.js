@@ -5,20 +5,14 @@ const User = require("../models/user");
 const registerFlag = false;
 const {transporter, mailOption} = require('../utils/nodeMailer-config');
 const crypto = require('crypto');
+const {checkValidationError} = require("../utils/validationError");
 
 
 exports.signup = async (req, res, next) => {
     try {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            console.log(errors.array())
-            const error = new Error('validation wrong');
-            error.statusCode = 422;
-            error.data = errors.array();
-            throw  error;
-        }
+        checkValidationError(req)
         const {email, password, username} = req.body;
-        const user = await authService.signup(email, password, username);
+        const user = await authService.signup(email, password, username,'user');
         //create Cart for User
         await cartService.createCart(user);
         res.status(201).json({
@@ -36,13 +30,7 @@ exports.signup = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     try {
         //validation check
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error = new Error('validation wrong');
-            error.statusCode = 422;
-            error.data = errors.array();
-            throw  error;
-        }
+        checkValidationError(req)
         //extract body request
         const {email, password} = req.body;
         //check exist user (email)
@@ -55,7 +43,7 @@ exports.login = async (req, res, next) => {
             const token = await authService.createJwtToken(user);
             res.status(200).json({
                 token: token,
-                userId: user.dataValues.id
+                userId: user.id
             })
         }
     } catch (err) {
@@ -66,11 +54,22 @@ exports.login = async (req, res, next) => {
     }
 }
 
+exports.logout = (req, res, next)=>{
+    req.logout();
+    res.redirect('/')
+}
+
 exports.getTest = (req, res, next) => {
     res.json({
         message: "you are test page  now !"
     })
 }
+exports.getTestAdmin = (req, res, next) => {
+    res.json({
+        message: "you are admin test page  now !"
+    })
+}
+
 
 
 exports.postResetPassword = async (req, res, next) => {
@@ -135,16 +134,9 @@ exports.getNewPassword = async (req, res, next) => {
 
 exports.postNewPassword =async (req, res , next)=>{
     try{
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            console.log(errors.array())
-            const error = new Error('validation wrong');
-            error.statusCode = 422;
-            error.data = errors.array();
-            throw  error;
-        }
-        const {newPassword , confirmPassword,token} = req.body
-        const hashPassword = await authService.hashPassword(password);
+        checkValidationError(req)
+        const {newPassword ,token} = req.body
+        const hashPassword = await authService.hashPassword(newPassword);
         let user = User.findOne({where : {resetToken : token}});
         if(user){
            user.password = hashPassword;
@@ -153,6 +145,55 @@ exports.postNewPassword =async (req, res , next)=>{
            res.redirect('/login')
         }
     }catch (err){
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+
+//admin
+exports.adminSignup = async (req , res , next) =>{
+    try {
+        checkValidationError(req)
+        const {email, password, username} = req.body;
+        const user = await authService.signup(email, password, username,'admin');
+        // await cartService.createCart(user);
+        res.status(201).json({
+            message: "create admin successfully",
+            user: user.id,
+            role : user.role
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+}
+
+
+exports.adminLogin =async (req , res , next) =>{
+    try {
+        //validation check
+        checkValidationError(req)
+        //extract body request
+        const {email, password} = req.body;
+        //check exist user (email)
+        const user = await authService.findEmail(email, registerFlag);
+        if (user) {
+            //compare hash password
+            await authService.comparePassword(user, password);
+            //create jwt token
+            const token = await authService.createJwtToken(user);
+            console.log(user.role)
+            res.status(200).json({
+                token: token,
+                userId: user.id
+            })
+        }
+    } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }

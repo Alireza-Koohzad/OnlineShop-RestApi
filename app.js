@@ -14,16 +14,17 @@ const Product = require('./models/product');
 const Order = require('./models/order');
 const OrderItem = require('./models/order-item');
 const Payment = require('./models/payment');
+const Category = require('./models/category');
 //create app server
 const app = express();
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null,"public/assets/uploads/");
+        cb(null, "public/assets/uploads/");
     },
     filename: (req, file, cb) => {
         console.log(file.originalname);
-        cb(null, new Date().toISOString() + "-" +  file.originalname);
+        cb(null, new Date().toISOString() + "-" + file.originalname);
     },
 });
 const fileFilter = (req, file, cb) => {
@@ -40,9 +41,8 @@ const fileFilter = (req, file, cb) => {
 
 app.use(multer({
     storage: storage,
-    fileFilter : fileFilter
+    fileFilter: fileFilter
 }).single("image"));
-
 
 
 //config body parser
@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 })
 
 //routers
-app.use('/' ,  routes);
+app.use('/', routes);
 
 //config middleware
 app.use(require('./middlewares/error.middleware'));
@@ -78,24 +78,18 @@ Cart.belongsToMany(Product, {through: CartItem});
 Product.belongsToMany(Cart, {through: CartItem});
 Order.belongsTo(User);
 User.hasMany(Order);
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
+Order.belongsToMany(Product, {through: OrderItem});
+Product.belongsToMany(Order, {through: OrderItem});
 User.hasMany(Payment);
 Order.hasOne(Payment);
 Payment.belongsTo(Order);
+Category.hasMany(Product);
+Product.belongsTo(Category);
 
 //connect to server
 sequelize
     .sync()
-    .then(  () => {
-        // const  product = new Product({
-        //     name : "laptop",
-        //     price : 45,
-        //     description : "this is good",
-        //     imageUrl : "null"
-        // })
-        // await product.save();
-
+    .then(() => {
         app.listen(3000)
     })
     .catch(err => console.log(err))

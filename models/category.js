@@ -4,29 +4,23 @@ const sequelize = require('../utils/database');
 const INTEGER = DataTypes.INTEGER;
 const STRING = DataTypes.STRING;
 
-const Order = sequelize.define('Order', {
+const Category = sequelize.define('Category', {
     id: {
         autoIncrement : true,
         primaryKey: true,
         type: INTEGER,
         allowNull: false
     },
-    payment_status : {
-        type : DataTypes.BOOLEAN,
+    name : {
+        type : STRING,
         allowNull: false,
-        defaultValue: false
-    },
-    shipping_status : {
-        type : DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
+    }
 
 })
 
 
 
-module.exports = Order;
+module.exports = Category;
 
 
 

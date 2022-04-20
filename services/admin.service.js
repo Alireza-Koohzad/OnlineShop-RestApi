@@ -105,3 +105,27 @@ exports.getOrder = async (orderId)=>{
 
     return data;
 }
+
+exports.putOrder = async (req) => {
+    const orderId = req.params;
+    const {payment_status , shipping_status} = req.body;
+    let order = await Order.findByPk(orderId);
+
+    if (!order) {
+        let error = new Error("orders not found");
+        error.statusCode = 404;
+        throw err;
+    }
+    if(!payment_status || !shipping_status){
+        let err = new Error("please enter status");
+        err.statusCode = 400;
+        throw err;
+    }
+    order.payment_status = payment_status;
+    order.shipping_status = shipping_status;
+    await order.save()
+    return order;
+}
+
+
+

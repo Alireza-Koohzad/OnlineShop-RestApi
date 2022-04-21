@@ -1,5 +1,6 @@
 const Product = require('../models/product');
 const User = require('../models/user');
+const {Op} = require("sequelize/types");
 
 exports.getAllProducts = async (req) => {
     const currentPage = req.query.page || 1;
@@ -75,6 +76,53 @@ exports.putProfile = async (req) => {
 
     return user;
 
+}
+
+
+exports.getFilterProduct = async (req) => {
+    let {
+        priceFrom,
+        priceTo,
+    } = req.query;
+    const products = await Product.findAll({
+        where: {
+            [Op.between]: [priceFrom, priceTo]
+        }
+    })
+    let response ;
+    if (!products) {
+        response = {
+            message: "product with this info does not exist",
+            products: []
+        }
+        return response;
+    }
+    response = {
+        products: products
+    }
+    return response;
+}
+
+exports.search = async (req) => {
+    let {term} = req.body;
+
+    let products = await Product.findAll({
+        where: {
+            [Op.like]: "%" + term + "%"
+        }
+    })
+    let response ;
+    if (!products) {
+        response = {
+            message: "this product  does not exist",
+            products: []
+        }
+        return response;
+    }
+    response = {
+        products: products
+    }
+    return response;
 }
 
 

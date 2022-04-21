@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const passport = require('passport');
 
 const authController = require('../controllers/auth.controller');
 const cartController = require('../controllers/cart.controller');
@@ -22,6 +21,8 @@ router.get('/user/get-all-products', userController.getAllProducts);
 router.get('/user/get-category-product/:catId', userController.getCategoryProduct);
 router.get('/user/edit-profile' , checkAuth , checkAuthUser , userController.getEditProfile);
 router.put('/user/edit-profile' , checkAuth , checkAuthUser ,profileMiddleware  , userController.putProfile)
+router.get('/user/filter-product' , userController.getFilterProduct);
+router.get('/user/search' , userController.search)
 //auth
 router.post('/user/signup', signupMiddleware, authController.signup);
 router.post('/user/login', loginMiddleware, authController.login)

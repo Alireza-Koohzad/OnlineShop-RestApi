@@ -2,19 +2,25 @@ const Order = require('../models/order');
 const Payment = require('../models/payment');
 const request = require('request-promise');
 const ZarinpalCheckout = require('zarinpal-checkout');
-const zarinpal =  ZarinpalCheckout.create('f1234567-f23f-32ef-awe3-005043a231be', true);
+const zarinpal = ZarinpalCheckout.create('f1234567-f23f-32ef-awe3-005043a231be', true);
 
 
 exports.postPayment = async (req, res, next) => {
     const orderId = req.body.orderId;
-    console.log(req.user)
     const orders = await req.user.getOrders({where: {id: orderId}});
     const order = orders[0];
+    if (order.payment_status) {
+        return res.json({
+            message: "This order has already been paid"
+        })
+    }
+
     const products = await order.getProducts();
     let totalPrice = 0;
     products.forEach(product => {
         totalPrice += product.OrderItem.quantity * product.price;
     })
+    console.log(products)
 
     zarinpal.PaymentRequest({
         Amount: totalPrice.toString() + "000",
@@ -28,10 +34,11 @@ exports.postPayment = async (req, res, next) => {
                 pay_code: response.authority,
                 price: totalPrice
             })
+            order.payment_status = true;
+            order.shipping_status = true;
+            await order.save();
             await payment.save()
             return res.json(response)
-        } else if (response.status === -3) {
-            console.log("DDD")
         }
     }).catch(err => {
         if (!err.statusCode) {
@@ -42,20 +49,21 @@ exports.postPayment = async (req, res, next) => {
 }
 
 exports.paymentReturnPage = async (req, res, next) => {
+    console.log("ADGAHSTHTSH")
     try {
         if (req.query.Status && req.query.Status !== 'OK') {
-            console.log("LLLLGHHH")
             throw new Error("payment not successfully");
         }
         let payment = await Payment.findOne({where: {pay_code: req.query.Authority}});
 
         zarinpal.PaymentVerification({
-            Amount: payment.price+"000", // In Tomans
+            Amount: payment.price + "000", // In Tomans
             Authority: req.query.Authority,
         }).then(async (response) => {
             if (response.status !== 100) {
                 throw new Error("payment not successfully");
             } else {
+                console.log("CCCARGAEG")
                 payment.set({status: true})
                 await payment.save();
                 return res.json({

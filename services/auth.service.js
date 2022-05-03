@@ -2,21 +2,21 @@ const User = require("../models/user");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-exports.signup = async (email, password, username , role) => {
+exports.signup = async (email, password, username, role) => {
     const hashPassword = await bcrypt.hash(password, 12);
     let user = new User({
         email: email,
         password: hashPassword,
         username: username
     });
-    if(role === 'admin'){
+    if (role === 'admin') {
         user.role = 'admin'
     }
     return user.save();
 }
 
-exports.hashPassword = async (password )=>{
-    return  await bcrypt.hash(password, 12);
+exports.hashPassword = async (password) => {
+    return await bcrypt.hash(password, 12);
 
 }
 
@@ -51,12 +51,12 @@ exports.createJwtToken = async (user) => {
         id: user.id,
         email: user.email
     }
-    const token = jwt.sign(
+    return jwt.sign(
         jwt_payload,
         'alirezaShopProject',
         {expiresIn: '3h'}
     );
-    return token;
+
 }
 
 

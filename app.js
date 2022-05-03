@@ -4,7 +4,7 @@ const sequelize = require('./utils/database');
 const routes = require('./routes/rotues');
 const passport = require('passport');
 const multer = require("multer");
-const uploadFile = require('./middlewares/upload.middleware');
+const session = require('express-session');
 
 //define models
 const User = require('./models/user')
@@ -17,6 +17,13 @@ const Payment = require('./models/payment');
 const Category = require('./models/category');
 //create app server
 const app = express();
+
+app.use(session({
+    secret : "mysecret",
+    resave : false,
+    saveUninitialized : false
+
+}))
 
 let storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -39,15 +46,14 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
+//config multer
 app.use(multer({
     storage: storage,
     fileFilter: fileFilter
 }).single("image"));
 
-
 //config body parser
 app.use(bodyParser.json());
-//config multer
 
 //config passport
 app.use(passport.initialize());
@@ -69,9 +75,6 @@ app.use('/', routes);
 app.use(require('./middlewares/error.middleware'));
 
 // association
-
-// Product.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
-// User.hasMany(Product);
 User.hasOne(Cart);
 Cart.belongsTo(User);
 Cart.belongsToMany(Product, {through: CartItem});

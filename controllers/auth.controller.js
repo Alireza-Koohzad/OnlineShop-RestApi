@@ -2,10 +2,10 @@ const authService = require('../services/auth.service');
 const cartService = require("../services/cart.service");
 const {validationResult} = require('express-validator/check')
 const User = require("../models/user");
-const registerFlag = false;
 const {transporter, mailOption} = require('../utils/nodeMailer-config');
 const crypto = require('crypto');
 const {checkValidationError} = require("../utils/validationError");
+const registerFlag = false;
 
 
 exports.signup = async (req, res, next) => {
@@ -28,6 +28,13 @@ exports.signup = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
+    console.log("VVVB")
+    if (req.session.userToken) {
+        return res.status(401).json({
+            status: 'error',
+            message: 'user is already logged in'
+        })
+    }
     try {
         //validation check
         checkValidationError(req)
@@ -35,12 +42,13 @@ exports.login = async (req, res, next) => {
         const {email, password} = req.body;
         //check exist user (email)
         const user = await authService.findEmail(email, registerFlag);
-        console.log(user.id)
         if (user) {
             //compare hash password
+
             await authService.comparePassword(user, password);
             //create jwt token
             const token = await authService.createJwtToken(user);
+            req.session.userToken = token;
             res.status(200).json({
                 token: token,
                 userId: user.id
@@ -54,9 +62,20 @@ exports.login = async (req, res, next) => {
     }
 }
 
-exports.logout = (req, res, next)=>{
+exports.userLogout = (req, res, next)=>{
     req.logout();
-    res.redirect('/')
+    req.session.userToken= undefined;
+    res.json({
+        message : "log out successfully"
+    })
+}
+
+exports.adminLogout = (req, res, next)=>{
+    req.logout();
+    req.session.adminToken = undefined;
+    res.json({
+        message : "log out successfully"
+    })
 }
 
 exports.getTest = (req, res, next) => {
@@ -175,6 +194,12 @@ exports.adminSignup = async (req , res , next) =>{
 
 
 exports.adminLogin =async (req , res , next) =>{
+    if (req.session.adminIsLoggedIn) {
+        return res.status(401).json({
+            status: 'error',
+            message: 'user is already logged in'
+        })
+    }
     try {
         //validation check
         checkValidationError(req)
@@ -187,7 +212,7 @@ exports.adminLogin =async (req , res , next) =>{
             await authService.comparePassword(user, password);
             //create jwt token
             const token = await authService.createJwtToken(user);
-            console.log(user.role)
+            req.session.adminToken = token;
             res.status(200).json({
                 token: token,
                 userId: user.id

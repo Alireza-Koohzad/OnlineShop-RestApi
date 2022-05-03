@@ -31,7 +31,6 @@ exports.editProduct = async (req, res, next) => {
     try {
         checkValidationError(req);
         const prodId = req.params.prodId;
-        console.log(prodId);
         const {name, price, description} = req.body;
         if (!req.file) {
             let err = new Error("no image provided!")

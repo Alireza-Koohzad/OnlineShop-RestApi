@@ -11,7 +11,7 @@ module.exports = (passport) => {
 
     try {
         //create passport middleware to check authorization
-        passport.use(new JwtStrategy(opt, async ( jwt_payload, done) => {
+        passport.use(new JwtStrategy(opt, async (jwt_payload, done) => {
 
             const user = await User.findOne({where: {id: jwt_payload.id}});
 

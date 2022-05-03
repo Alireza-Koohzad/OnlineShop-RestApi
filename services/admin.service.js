@@ -34,7 +34,7 @@ exports.editProduct = async (prodId, name, price, description, imageUrl) => {
 
 
 exports.deleteProduct = async (prodId) => {
-    let product = await Product.findByPk({where: {id: prodId}});
+    let product = await Product.findByPk(prodId);
     if (!product) {
         let error = new Error("product not found");
         error.statusCode = 404;
@@ -45,9 +45,9 @@ exports.deleteProduct = async (prodId) => {
     return temp;
 }
 
-exports.getProducts = async ()=>{
+exports.getProducts = async () => {
     const products = await Product.findAll();
-    if(!products){
+    if (!products) {
         let error = new Error("product not found");
         error.statusCode = 404;
         throw err;
@@ -56,8 +56,8 @@ exports.getProducts = async ()=>{
 }
 
 
-exports.getProduct = async (prodId) =>{
-    const product = await Product.findByPk({where : {id : prodId}});
+exports.getProduct = async (prodId) => {
+    const product = await Product.findByPk(prodId);
     if (!product) {
         let error = new Error("product not found");
         error.statusCode = 404;
@@ -69,9 +69,9 @@ exports.getProduct = async (prodId) =>{
 
 // manage orders
 
-exports.getOrders = async ()=>{
+exports.getOrders = async () => {
     const orders = Order.findAll({
-        order : ['id' , 'DESC']
+        order: ['id']
     })
     if (!orders) {
         let error = new Error("orders not found");
@@ -81,34 +81,35 @@ exports.getOrders = async ()=>{
     return orders;
 }
 
-exports.getOrder = async (orderId)=>{
-    const order = Order.findByPk(orderId , {include : ['Products']});
+exports.getOrder = async (orderId) => {
+    const order = Order.findByPk(orderId, {include: ['Products']});
     if (!order) {
         let error = new Error("orders not found");
         error.statusCode = 404;
         throw err;
     }
     let totalPrice = 0;
-    if(order.products.length >0){
+    if (order.products.length > 0) {
         order.products.map((d, i) => ({
             quantity: order.products[i].OrderItem.quantity,
         }))
-        order.products.forEach(p =>{
+        order.products.forEach(p => {
             totalPrice += p.price * p.quantity
         })
     }
     let data = {
-        message : "get order successfully",
-        order : order,
-        totalPrice : totalPrice
+        message: "get order successfully",
+        order: order,
+        totalPrice: totalPrice
     }
 
     return data;
 }
 
 exports.putOrder = async (req) => {
-    const orderId = req.params;
-    const {payment_status , shipping_status} = req.body;
+    const {orderId} = req.params;
+    const {payment_status, shipping_status} = req.body;
+    console.log(orderId)
     let order = await Order.findByPk(orderId);
 
     if (!order) {
@@ -116,7 +117,7 @@ exports.putOrder = async (req) => {
         error.statusCode = 404;
         throw err;
     }
-    if(!payment_status || !shipping_status){
+    if (!payment_status || !shipping_status) {
         let err = new Error("please enter status");
         err.statusCode = 400;
         throw err;

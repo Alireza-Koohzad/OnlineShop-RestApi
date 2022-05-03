@@ -2,7 +2,7 @@ const userService = require('../services/user.service');
 
 exports.getAllProducts = async (req, res, next) => {
     try {
-        const data = await userService.getAllProducts();
+        const data = await userService.getAllProducts(req);
         res.status(200).json({
             ...data,
             message: "get products successfully ",
